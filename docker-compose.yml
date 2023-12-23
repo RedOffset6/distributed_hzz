@@ -11,8 +11,8 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
-  consumer:
-    build: consumer/.
+  worker:
+    build: worker/.
     networks:
       - rabbit
     deploy:
@@ -22,8 +22,8 @@ services:
       rabbitmq:
         condition: service_healthy
         restart: true
-  producer:
-    build: producer/.
+  manager:
+    build: manager/.
     networks:
       - rabbit
     deploy:
