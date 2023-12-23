@@ -2,7 +2,7 @@
 FROM python:latest
 
 # add our python program
-ADD manager.py ./
+ADD manager.py infofile.py ./
 
 # install dependent libraries
 RUN pip install pika
