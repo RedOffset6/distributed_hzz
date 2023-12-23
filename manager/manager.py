@@ -10,7 +10,7 @@ import pika
 
 # when starting services with docker compose
 params = pika.ConnectionParameters(
-    'rabbitmq-demo-rabbitmq-1',
+    'distributed_computing_project-rabbitmq-1',
     heartbeat=0)
 
 # create the connection to broker
