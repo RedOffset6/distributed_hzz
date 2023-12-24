@@ -35,6 +35,6 @@ services:
         restart: true
 networks:
   rabbit:
-    driver: overlay
+    driver: bridge
     attachable: true
 
