@@ -68,14 +68,8 @@ tuple_path = "https://atlas-opendata.web.cern.ch/atlas-opendata/samples/2020/4le
 def get_data_from_files():
     data = {} # define empty dictionary to hold awkward arrays
     for s in samples: # loop over samples
-        
-        print(f"s = {s}")
-        
-        print('Processing '+s+' samples') # print which sample
         #frames = [] # define empty list to hold data
         for val in samples[s]['list']: # loop over each file
-            
-            print(f"val = {val}")
             
             if s == 'data': prefix = "Data/" # Data prefix
             else: # MC prefix
