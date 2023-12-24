@@ -9,6 +9,12 @@ import aiohttp
 import requests
 import pickle
 
+##########################################################################
+#                                                                        #
+#             DEFINES A FUNCTION WHICH BUILDS THE WORK PLAN              #
+#                                                                        #
+##########################################################################
+
 #a functions which builds a plan for all of the work which needs to be completed
 def build_work_plan(batch_size = 100):
     url_list = url_builder()
@@ -36,6 +42,12 @@ def build_work_plan(batch_size = 100):
 
             print(f"Under {path}\nthere were {numevents} events")
     return work_plan
+
+##########################################################################
+#                                                                        #
+#            DEFINES A FUNCTION WHICH BUILDS A LIST OF URLS              #
+#                                                                        #
+##########################################################################
 
 #A function which builds a list of all of the URLS which need to be iterated over
 def url_builder():
@@ -79,6 +91,13 @@ def url_builder():
     
     return url_list
 
+##########################################################################
+#                                                                        #
+#            ESTABLISHES CONNECTION AND SENDS JOBS TO QUEUE              #
+#                                                                        #
+##########################################################################
+
+
 #establishing a connection and channels
 connection = pika.BlockingConnection(pika.ConnectionParameters('distributed_computing_project-rabbitmq-1', heartbeat=0))
 
@@ -107,38 +126,4 @@ for i in range(0,20):
 
 #closes the connection
 connection.close()
-
-#getting
-# def get_data_from_files():
-#     data = {} # define empty dictionary to hold awkward arrays
-#     for s in samples: # loop over samples
-#         #frames = [] # define empty list to hold data
-#         for val in samples[s]['list']: # loop over each file
-            
-#             if s == 'data': prefix = "Data/" # Data prefix
-#             else: # MC prefix
-#                 prefix = "MC/mc_"+str(infofile.infos[val]["DSID"])+"."
-#             filestring = tuple_path+prefix+val+".4lep.root" # file name to open
-
-#            # send a simple message
-            
-#             channel.basic_publish(
-#                 exchange='',
-#                 routing_key='task_queue',
-#                 body=filestring,
-#                 properties=pika.BasicProperties(
-#                     delivery_mode=pika.DeliveryMode.Persistent
-#                 ))
-#             print(f"The following text was sent: {filestring}")
-           
-#         #     temp = read_file(fileString,val) # call the function read_file defined below
-#         #     frames.append(temp) # append array returned from read_file to list of awkward arrays
-#         # data[s] = ak.concatenate(frames) # dictionary entry is concatenated awkward arrays
-    
-#     #return data # return dictionary of awkward arrays
-# get_data_from_files()
-
-
-# #closing the connection once all of the data has been sent to the queue
-
 
