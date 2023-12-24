@@ -9,6 +9,8 @@ channel = connection.channel()
 channel.queue_declare(queue='task_queue', durable=True)
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
+# Purge the queue
+channel.queue_purge(queue='task_queue')
 
 def callback(ch, method, properties, body):
     time.sleep(2)
