@@ -18,8 +18,13 @@ import pickle
 #a functions which builds a plan for all of the work which needs to be completed
 def build_work_plan(batch_size = 100):
     url_list = url_builder()
+    #the url list which is returned in the following form [[url1, val1], [url2, val2], ...]
     work_plan = []
     for path in url_list:
+        #note that:
+        #path[0]  = the url
+        #path[1] = the sample (aka val)#
+        
         #finds how many events are stored under a certain URL
         with uproot.open(path[0] + ":mini") as tree:
             numevents = tree.num_entries # number of events
@@ -33,9 +38,10 @@ def build_work_plan(batch_size = 100):
                 #creates a bath_info dictionary 
                 batch_info = {
                     "job_id": unique_id,
-                    "url": path,
+                    "url": path[0],
                     "start_index": start_index,
-                    "finish_index": finish_index
+                    "finish_index": finish_index,
+                    "sample": path[1]
                 }
                 # print(f"Batch Info: {batch_info}")
                 work_plan.append(batch_info)
@@ -89,6 +95,7 @@ def url_builder():
             filestring = tuple_path+prefix+val+".4lep.root" # file name to open
             url_list.append([filestring, val])
     
+    #returns a list of lists in the following form [[url1, val1], [url2, val2], ...]
     return url_list
 
 ##########################################################################

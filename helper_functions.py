@@ -22,7 +22,8 @@ def build_work_plan(url_list, batch_size = 100):
                     "job_id": unique_id,
                     "url": path,
                     "start_index": start_index,
-                    "finish_index": finish_index
+                    "finish_index": finish_index,
+                    "sample": path[1]
                 }
                 # print(f"Batch Info: {batch_info}")
                 work_plan.append(batch_info)
@@ -70,6 +71,7 @@ def url_builder():
             filestring = tuple_path+prefix+val+".4lep.root" # file name to open
             url_list.append([filestring, val])
     
+    #returns a list of lists in the following form [[url1, val1], [url2, val2], ...]
     return url_list
 
 #lumi = 0.5 # fb-1 # data_A only
