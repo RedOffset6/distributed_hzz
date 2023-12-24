@@ -2,6 +2,7 @@
 import pika
 import time
 from datetime import datetime
+import pickle
 
 connection = pika.BlockingConnection(pika.ConnectionParameters('distributed_computing_project-rabbitmq-1', heartbeat=0))
 channel = connection.channel()
@@ -13,7 +14,9 @@ def callback(ch, method, properties, body):
     time.sleep(2)
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    print(f" [x] Received {body.decode()} at {current_time}")
+    instruction = pickle.loads(body)
+
+    print(f" The following instructuion was recieved at {current_time} :\n{instruction}\n ")
 
 
     print(f"[x] Done")

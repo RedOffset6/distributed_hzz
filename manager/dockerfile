@@ -5,7 +5,7 @@ FROM python:latest
 ADD manager.py infofile.py ./
 
 # install dependent libraries
-RUN pip install pika
+RUN pip install pika uproot aiohttp requests
 
 # the command to run our program
 CMD [ "python", "./manager.py"]
