@@ -197,11 +197,12 @@ def read_file(instruction):
 connection = pika.BlockingConnection(pika.ConnectionParameters('distributed_computing_project-rabbitmq-1', heartbeat=0))
 channel = connection.channel()
 
-channel.queue_declare(queue='task_queue', durable=True)
+channel.queue_declare(queue='task_queue', durable=False)
+
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
 def callback(ch, method, properties, body):
-    time.sleep(2)
+    #time.sleep(2)
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     instruction = pickle.loads(body)

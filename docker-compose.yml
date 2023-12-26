@@ -11,17 +11,19 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
-  queue_purge:
-    build: queue_purge/.
-    networks:
-      - rabbit
-    deploy:
-      mode: replicated
-      replicas: 1
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-        restart: true
+    environment:
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq queue_index_max_journal_entries 0"
+  # queue_purge:
+  #   build: queue_purge/.
+  #   networks:
+  #     - rabbit
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #       restart: true
   worker:
     build: worker/.
     networks:

@@ -110,7 +110,7 @@ connection = pika.BlockingConnection(pika.ConnectionParameters('distributed_comp
 
 channel = connection.channel()
 
-channel.queue_declare(queue='task_queue', durable=True)
+channel.queue_declare(queue='task_queue', durable=False)
 
 #creates a workplan
 
