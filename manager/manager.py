@@ -16,7 +16,7 @@ import pickle
 ##########################################################################
 
 #a functions which builds a plan for all of the work which needs to be completed
-def build_work_plan(batch_size = 100):
+def build_work_plan(batch_size = 10):
     url_list = url_builder()
     #the url list which is returned in the following form [[url1, val1], [url2, val2], ...]
     work_plan = []
@@ -111,6 +111,13 @@ connection = pika.BlockingConnection(pika.ConnectionParameters('distributed_comp
 channel = connection.channel()
 
 channel.queue_declare(queue='task_queue', durable=False)
+# channel.queue_declare(queue='result_queue', durable=False)
+
+#defining a function for the results callback
+def result_callback(ch, method, properties, body):
+    print(body, flush = True)
+
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #creates a workplan
 
@@ -130,6 +137,14 @@ for i in range(0,20):
                         delivery_mode=pika.DeliveryMode.Persistent))
     
     print(f"message {i} was sent succesfully from the manager node")
+
+
+channel.basic_qos(prefetch_count=1)
+channel.basic_consume(queue='result_queue', on_message_callback=result_callback)
+
+print("start listening for results", flush=True)
+
+channel.start_consuming()
 
 #closes the connection
 connection.close()

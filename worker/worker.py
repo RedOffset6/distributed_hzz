@@ -198,8 +198,21 @@ connection = pika.BlockingConnection(pika.ConnectionParameters('distributed_comp
 channel = connection.channel()
 
 channel.queue_declare(queue='task_queue', durable=False)
+channel.queue_declare(queue='result_queue', durable=False)
+
 
 print(' [*] Waiting for messages. To exit press CTRL+C')
+
+
+def send_result_message():
+    #sends a message down the channel
+    channel.basic_publish(exchange='',
+                        routing_key='result_queue',
+                        body="Hello this is my return message",
+                        properties=pika.BasicProperties(
+                        delivery_mode=pika.DeliveryMode.Persistent))
+
+
 
 def callback(ch, method, properties, body):
     #time.sleep(2)
@@ -209,6 +222,9 @@ def callback(ch, method, properties, body):
 
     #print(f" The following instructuion was recieved at {current_time} :\n{instruction}\n ")
     read_file(instruction)
+    
+    send_result_message()
+
 
     #print(f"[x] Done")
     ch.basic_ack(delivery_tag=method.delivery_tag)
