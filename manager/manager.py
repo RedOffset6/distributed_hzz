@@ -8,6 +8,7 @@ import uuid
 import aiohttp
 import requests
 import pickle
+import awkward as ak # to represent nested data in columnar format
 
 ##########################################################################
 #                                                                        #
@@ -16,10 +17,11 @@ import pickle
 ##########################################################################
 
 #a functions which builds a plan for all of the work which needs to be completed
-def build_work_plan(batch_size = 10):
+def build_work_plan(batch_size = 200, fraction = 0.01):
     url_list = url_builder()
     #the url list which is returned in the following form [[url1, val1], [url2, val2], ...]
     work_plan = []
+    job_completion_dict = {}
     for path in url_list:
         #note that:
         #path[0]  = the url
@@ -28,6 +30,9 @@ def build_work_plan(batch_size = 10):
         #finds how many events are stored under a certain URL
         with uproot.open(path[0] + ":mini") as tree:
             numevents = tree.num_entries # number of events
+
+            #limits the total number of events calculated by multiplying the true numevents by the fraction
+            numevents = int(numevents*fraction)
 
             # Iterate over events and create batches
             for start_index in range(0, numevents, batch_size):
@@ -46,8 +51,10 @@ def build_work_plan(batch_size = 10):
                 # print(f"Batch Info: {batch_info}")
                 work_plan.append(batch_info)
 
-            print(f"Under {path}\nthere were {numevents} events")
-    return work_plan
+                job_completion_dict[unique_id] = False
+
+            #print(f"Under {path}\nthere were {numevents} events")
+    return work_plan, job_completion_dict
 
 ##########################################################################
 #                                                                        #
@@ -115,19 +122,47 @@ channel.queue_declare(queue='task_queue', durable=False)
 
 #defining a function for the results callback
 def result_callback(ch, method, properties, body):
-    print(body, flush = True)
+    
+    results = pickle.loads(body)
+    
+    #print(f"The results of calculation: {results['job_id']} have been received", flush = True)
+
+    frames.append(results["result_data"])
+
+    print(f"The computation is {(len(frames)/len(job_completion_dict)):.1%} complete" , flush = True)
+
+    job_completion_dict[results["job_id"]] = True
+
+
+
+    # # Print the first 20 items
+    # for index, (key, value) in enumerate(job_completion_dict.items()):
+    #     print(f"{key}: {value}", flush = True)
+    #     if index == 19:
+    #         break  # Stop after printing the first 20 items
+
+    #checks to see if all of the jobs have been recieved
+    all_received = all(job_completion_dict.values())
+
+    if all_received:
+        print("All 'recieved' values are True.")
+        ch.stop_consuming()
+        print("stopped consuming", flush = True)
+    # else:
+    #     print("Not all 'recieved' values are True.")
+
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 #creates a workplan
 
 print("WORKPLAN FUNCTION CALLED")
-workplan = build_work_plan()
-print("WORKPLAN COMPLETE")
+workplan, job_completion_dict = build_work_plan()
+print(f"There are {len(workplan)} items in the workplan")
 
-#serialises the first 20 items from the work plan and sends these top the queue
-for i in range(0,20):
-    serialised_instruction = pickle.dumps(workplan[i])
+#serialises the first 20 items from the work plan and sends these to the queue
+for instruction in workplan:
+    serialised_instruction = pickle.dumps(instruction)
 
     #sends a message down the channel
     channel.basic_publish(exchange='',
@@ -136,7 +171,9 @@ for i in range(0,20):
                         properties=pika.BasicProperties(
                         delivery_mode=pika.DeliveryMode.Persistent))
     
-    print(f"message {i} was sent succesfully from the manager node")
+
+    
+    #print(f"message {i} was sent succesfully from the manager node")
 
 
 channel.basic_qos(prefetch_count=1)
@@ -144,7 +181,15 @@ channel.basic_consume(queue='result_queue', on_message_callback=result_callback)
 
 print("start listening for results", flush=True)
 
+frames = []
+
 channel.start_consuming()
+
+result_data = ak.concatenate(frames)
+
+print("PRINTING RESULT DATA")
+
+print(result_data, flush = True)
 
 #closes the connection
 connection.close()

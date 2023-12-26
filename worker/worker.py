@@ -181,12 +181,21 @@ def read_file(instruction):
             nOut = len(data) # number of events passing cuts in this batch
             data_all.append(data) # append array from this batch
             elapsed = time.time() - start # time taken to process
-            print("\t\t nIn: "+str(nIn)+",\t nOut: \t"+str(nOut)+"\t in "+str(round(elapsed,1))+"s") # events before and after
+            #print("\t\t nIn: "+str(nIn)+",\t nOut: \t"+str(nOut)+"\t in "+str(round(elapsed,1))+"s") # events before and after
     
     #this needs to be passed in a message with the unique id
     #return ak.concatenate(data_all) # return array containing events passing all cuts
 
-    print(f"the result of the calculation is {ak.concatenate(data_all)}")
+    #concatinates data_all to get the results list 
+    job_results = ak.concatenate(data_all)
+
+    #makes a dictionary to be returned
+    results = {
+                    "job_id": instruction["job_id"],
+                    "result_data": job_results
+                }
+    
+    return results
 
 ##########################################################################
 #                                                                        #
@@ -204,11 +213,14 @@ channel.queue_declare(queue='result_queue', durable=False)
 print(' [*] Waiting for messages. To exit press CTRL+C')
 
 
-def send_result_message():
+def send_result_message(results):
+
+    serialised_results = pickle.dumps(results)
+    
     #sends a message down the channel
     channel.basic_publish(exchange='',
                         routing_key='result_queue',
-                        body="Hello this is my return message",
+                        body=serialised_results,
                         properties=pika.BasicProperties(
                         delivery_mode=pika.DeliveryMode.Persistent))
 
@@ -221,9 +233,9 @@ def callback(ch, method, properties, body):
     instruction = pickle.loads(body)
 
     #print(f" The following instructuion was recieved at {current_time} :\n{instruction}\n ")
-    read_file(instruction)
+    results = read_file(instruction)
     
-    send_result_message()
+    send_result_message(results)
 
 
     #print(f"[x] Done")

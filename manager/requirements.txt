@@ -2,3 +2,4 @@ pika
 uproot
 aiohttp
 requests
+awkward
