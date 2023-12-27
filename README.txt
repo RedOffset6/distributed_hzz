@@ -2,7 +2,7 @@ This application performs the hzz analysis.
 
 The container images can be built using the following command:
 
-. ./build_project
+. ./build_project.sh
 
 The application can be started by running the following command:
 
