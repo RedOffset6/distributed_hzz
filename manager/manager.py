@@ -18,7 +18,28 @@ import os
 #             DEFINES A FUNCTION WHICH BUILDS THE WORK PLAN              #
 #                                                                        #
 ##########################################################################
+samples = {
 
+        'data': {
+            'list' : ['data_A','data_B','data_C','data_D'],
+        },
+
+        r'Background $Z,t\bar{t}$' : { # Z + ttbar
+            'list' : ['Zee','Zmumu','ttbar_lep'],
+            'color' : "#6b59d3" # purple
+        },
+
+        r'Background $ZZ^*$' : { # ZZ
+            'list' : ['llll'],
+            'color' : "#ff0000" # red
+        },
+
+        r'Signal ($m_H$ = 125 GeV)' : { # H -> ZZ -> llll
+            'list' : ['ggH125_ZZ4lep','VBFH125_ZZ4lep','WH125_ZZ4lep','ZH125_ZZ4lep'],
+            'color' : "#00cdff" # light blue
+        },
+
+}
 #a functions which builds a plan for all of the work which needs to be completed
 def build_work_plan(batch_size = 200, fraction = 0.01):
     url_list = url_builder()
@@ -69,29 +90,6 @@ def build_work_plan(batch_size = 200, fraction = 0.01):
 
 #A function which builds a list of all of the URLS which need to be iterated over
 def url_builder():
-    #defining samples struct
-    samples = {
-
-        'data': {
-            'list' : ['data_A','data_B','data_C','data_D'],
-        },
-
-        r'Background $Z,t\bar{t}$' : { # Z + ttbar
-            'list' : ['Zee','Zmumu','ttbar_lep'],
-            'color' : "#6b59d3" # purple
-        },
-
-        r'Background $ZZ^*$' : { # ZZ
-            'list' : ['llll'],
-            'color' : "#ff0000" # red
-        },
-
-        r'Signal ($m_H$ = 125 GeV)' : { # H -> ZZ -> llll
-            'list' : ['ggH125_ZZ4lep','VBFH125_ZZ4lep','WH125_ZZ4lep','ZH125_ZZ4lep'],
-            'color' : "#00cdff" # light blue
-        },
-
-    }
     tuple_path = "https://atlas-opendata.web.cern.ch/atlas-opendata/samples/2020/4lep/" # web address
 
     url_list = []
@@ -198,30 +196,6 @@ list_of_results_dicts = []
 channel.start_consuming()
 
 
-#redefines samples (this should have been done globaly at the top of the code so it is not duplicated)
-samples = {
-
-        'data': {
-            'list' : ['data_A','data_B','data_C','data_D'],
-        },
-
-        r'Background $Z,t\bar{t}$' : { # Z + ttbar
-            'list' : ['Zee','Zmumu','ttbar_lep'],
-            'color' : "#6b59d3" # purple
-        },
-
-        r'Background $ZZ^*$' : { # ZZ
-            'list' : ['llll'],
-            'color' : "#ff0000" # red
-        },
-
-        r'Signal ($m_H$ = 125 GeV)' : { # H -> ZZ -> llll
-            'list' : ['ggH125_ZZ4lep','VBFH125_ZZ4lep','WH125_ZZ4lep','ZH125_ZZ4lep'],
-            'color' : "#00cdff" # light blue
-        },
-
-}
-
 print("Printing item 1 in the list of result dicts")
 
 print(list_of_results_dicts[0])
@@ -258,29 +232,6 @@ connection.close()
 #                                                                        #
 ##########################################################################
 
-#redefines samples (this should have been done globaly at the top of the code so it is not duplicated)
-samples = {
-
-        'data': {
-            'list' : ['data_A','data_B','data_C','data_D'],
-        },
-
-        r'Background $Z,t\bar{t}$' : { # Z + ttbar
-            'list' : ['Zee','Zmumu','ttbar_lep'],
-            'color' : "#6b59d3" # purple
-        },
-
-        r'Background $ZZ^*$' : { # ZZ
-            'list' : ['llll'],
-            'color' : "#ff0000" # red
-        },
-
-        r'Signal ($m_H$ = 125 GeV)' : { # H -> ZZ -> llll
-            'list' : ['ggH125_ZZ4lep','VBFH125_ZZ4lep','WH125_ZZ4lep','ZH125_ZZ4lep'],
-            'color' : "#00cdff" # light blue
-        },
-
-}
 
 MeV = 0.001
 GeV = 1.0
