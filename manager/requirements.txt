@@ -3,3 +3,5 @@ uproot
 aiohttp
 requests
 awkward
+matplotlib
+numpy

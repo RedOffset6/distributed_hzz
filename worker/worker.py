@@ -168,7 +168,7 @@ def read_file(instruction):
 
             # calculation of 4-lepton invariant mass using the function calc_mllll defined above
             data['mllll'] = calc_mllll(data.lep_pt, data.lep_eta, data.lep_phi, data.lep_E)
-
+            # data['data'] = ak.zip({'mllll': calc_mllll(data.lep_pt, data.lep_eta, data.lep_phi, data.lep_E)})
             # array contents can be printed at any stage like this
             #print(data)
 
@@ -192,7 +192,8 @@ def read_file(instruction):
     #makes a dictionary to be returned
     results = {
                     "job_id": instruction["job_id"],
-                    "result_data": job_results
+                    "result_data": job_results,
+                    "sample": instruction["s"]
                 }
     
     return results
