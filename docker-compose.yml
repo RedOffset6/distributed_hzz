@@ -46,6 +46,9 @@ services:
       rabbitmq:
         condition: service_healthy
         restart: true
+    volumes:
+      - /mnt/c/Users/benlu/Documents/Bristol/forth_year/computing/distributed_computing_project/manager:/app
+      - /mnt/c/Users/benlu/Documents/Bristol/forth_year/computing/distributed_computing_project/images:/app/data/static
 networks:
   rabbit:
     driver: bridge

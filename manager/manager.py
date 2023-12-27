@@ -12,7 +12,7 @@ import awkward as ak # to represent nested data in columnar format
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import AutoMinorLocator # for minor ticks
-
+import os
 ##########################################################################
 #                                                                        #
 #             DEFINES A FUNCTION WHICH BUILDS THE WORK PLAN              #
@@ -415,8 +415,10 @@ def plot_data(data):
     # draw the legend
     main_axes.legend( frameon=False ) # no box around the legend
     
-    plt.savefig("hzz_plot.png", dpi=300, bbox_inches="tight")
-
+    # plt.savefig("hzz_plot.png", dpi=300, bbox_inches="tight")
+    # Save the plot to the specified directory within the container
+    os.makedirs('/app/data/static', exist_ok=True)
+    plt.savefig('/app/data/static/plot.png', dpi=300, bbox_inches="tight")
     return
 
 
